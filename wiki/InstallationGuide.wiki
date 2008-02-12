@@ -1,0 +1,13 @@
+#summary Installation hints.
+#labels Featured,Phase-Deploy
+
+= Prerequisites =
+
+You need [http://code.google.com/p/fuserl fuserl] and [http://code.google.com/p/fragmentron fragmentron].
+
+You also need [http://support.process-one.net/doc/display/CONTRIBS/EUnit eunit] from process one.
+
+= Tested Platforms =
+
+  * Ubuntu 64 bit Linux (feisty).
+  * OS/X 10.4 i386: known *not* to work, I'm trying to figure it out.
