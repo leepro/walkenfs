@@ -7,6 +7,47 @@ You need [http://code.google.com/p/fuserl fuserl] and [http://code.google.com/p/
 
 You also need [http://support.process-one.net/doc/display/CONTRIBS/EUnit eunit] from process one.
 
+= Installing =
+
+The project uses automake.  The default prefix is /usr; if you don't like that, use the {{{--prefix}}} option to configure.
+
+Running {{{make check}}} is strongly suggested.
+
+= Hello World =
+
+No nice mkfs util or anything right now ...
+
+{{{
+% erl -sname $$                       
+Erlang (BEAM) emulator version 5.5.2 [source] [64-bit] [async-threads:0] [hipe] [kernel-poll:false]
+
+Eshell V5.5.2  (abort with ^G)
+(27221@ubsrvvmw)1> ok = application:start (nodefinder).
+ok
+(27221@ubsrvvmw)2> ok = mnesia:start ().
+ok
+(27221@ubsrvvmw)3> { atomic, ok } = mnesia:change_table_copy_type (schema, node (), disc_copies).
+{atomic,ok}
+(27221@ubsrvvmw)4> ok = application:load (walkenfs).
+ok
+(27221@ubsrvvmw)5> ok = application:set_env (walkenfs, init_copies, 1).
+ok
+(27221@ubsrvvmw)6> ok = application:set_env (walkenfs, init_fragments, 1).
+ok
+(27221@ubsrvvmw)7> ok = application:set_env (walkenfs, mount_point, "/tmp/walken").
+ok
+(27221@ubsrvvmw)8> ok = file:make_dir ("/tmp/walken").
+ok
+(27221@ubsrvvmw)9> ok = application:load (fuserl).
+ok
+(27221@ubsrvvmw)10> ok = application:start (walkenfs).
+Mnesia('27221@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
+ok
+}}}
+You should now have a walkenfs mounted at {{{/tmp/walken}}}.  If you exit the Erlang shell it will get unmounted.
+
+
+
 = Tested Platforms =
 
   * Ubuntu 64 bit Linux (feisty).
