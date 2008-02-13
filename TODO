@@ -1,0 +1,5 @@
+getlk/setlk (!)
+
+localize directory entry by Inode so only one fragment is searched in readdir
+
+WISHLIST: easy resizing (grow-only is fine)
