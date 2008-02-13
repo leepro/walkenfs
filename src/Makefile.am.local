@@ -1,0 +1,20 @@
+# put whatever (auto)make commands here, they will be included from Makefile.am
+
+dist_erlappsrc_DATA = 		\
+  $(wildcard *.erl)
+
+dist_erlappinclude_DATA =	\
+  $(wildcard *.hrl)
+
+erlappebin_SCRIPTS =					\
+  @FW_PACKAGE_NAME@.app					\
+  $(patsubst %.erl, %.beam, $(dist_erlappsrc_DATA))
+
+check_DATA =			\
+  .dialyzer_mostly_ok
+
+.dialyzer_mostly_ok: $(filter-out ets.erl, $(wildcard *.erl))
+	dialyzer ${DIALYZERFLAGS} --src -c $^ 
+	touch $@
+
+DIALYZERFLAGS = -q

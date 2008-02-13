@@ -1,0 +1,24 @@
+dnl -- include additional autoconf commands here
+dnl -- do not include AC_OUTPUT, this is called for you
+
+AC_PROG_CC
+AC_LANG(C)
+
+AC_CANONICAL_HOST()
+
+case "$host_os" in
+  darwin*)
+    AC_DEFINE([DARWIN_TWEAKS], 1, [define if compiling for darwin (macfuse)])
+    ;;
+  linux*)
+    ;;
+  freebsd7*)
+    AC_DEFINE([FREEBSD7_TWEAKS], 1, [define if compiling for freebsd 7])
+    ;;
+  *)
+    AC_WARN([untested os '$host_os' detected, good luck!])
+    ;;
+esac
+
+FW_TEMPLATE_ERLANG_CHECK_MODULE([eunit], ,
+                                [AC_MSG_WARN([need eunit to run tests])])
