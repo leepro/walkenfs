@@ -42,7 +42,7 @@ ok
 Mnesia('27221@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
 ok
 }}}
-You should now have a walkenfs mounted at {{{/tmp/walken}}}.  If you exit the Erlang shell it will get unmounted.
+You should now have a walkenfs mounted at {{{/tmp/walken}}}.  Try stuff, see what happens. If you exit the Erlang shell it will get unmounted.
 
 
 
