@@ -200,6 +200,8 @@ getattr (Ctx, Inode, Cont, State) ->
 
 %% @hidden
 
+getxattr (_Ctx, _Inode, <<"system.", _/binary>>, _Size, _Cont, State) ->
+  { #fuse_reply_err{ err = enotsup }, State };
 getxattr (Ctx, Inode, Name, Size, Cont, State) ->
   ?YO ("getxattr~n", []),
   spawn_link (fun () -> getxattr_async (Ctx,

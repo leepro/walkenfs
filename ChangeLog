@@ -1,2 +1,5 @@
+=Version 0.0.1=
+  * Don't support "system." prefix for xattrs.  Was causing wierd ls output.
+
 =Version 0.0.0=
   * Initial version.
