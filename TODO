@@ -5,3 +5,4 @@ localize directory entry by Inode so only one fragment is searched in readdir
 WISHLIST: easy resizing (grow-only is fine)
 
 move stuff out of walkenfs:start/0 and into walkenfs:start/2
+add fuserl to app prereqs, change load to start in start/0 
