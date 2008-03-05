@@ -18,7 +18,7 @@ Running {{{make check}}} is strongly suggested.
 No nice mkfs util or anything right now ...
 
 {{{
-% erl -sname $$                       
+% erl -sname $$ +A 10                    
 Erlang (BEAM) emulator version 5.5.2 [source] [64-bit] [async-threads:0] [hipe] [kernel-poll:false]
 
 Eshell V5.5.2  (abort with ^G)
@@ -36,15 +36,14 @@ ok
 ok
 (27221@ubsrvvmw)7> ok = file:make_dir ("/tmp/walken").
 ok
-(27221@ubsrvvmw)8> ok = application:load (fuserl).
-ok
-(27221@ubsrvvmw)9> ok = application:start (walkenfs).
-Mnesia('27221@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
+(27221@ubsrvvmw)8> walkenfs:start ().
+
+=INFO REPORT==== 4-Mar-2008::22:48:02 ===
+walkenfs attempting load of ets: auto_detect 321717412589622444982284875105537266341
+Mnesia('3818@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
 ok
 }}}
 You should now have a walkenfs mounted at {{{/tmp/walken}}}.  Try stuff, see what happens. If you exit the Erlang shell it will get unmounted.
-
-
 
 = Tested Platforms =
 
