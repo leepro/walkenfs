@@ -1,3 +1,8 @@
+=Version 0.0.2=
+  * Change default mount point to /walken.
+  * Provide app var to control whether bug fix to ets is used.
+  * Move bug fix ets to priv dir to prevent accidental loading.
+
 =Version 0.0.1=
   * Don't support "system." prefix for xattrs.  Was causing wierd ls output.
 
