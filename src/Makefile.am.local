@@ -1,7 +1,13 @@
 # put whatever (auto)make commands here, they will be included from Makefile.am
 
 dist_erlappsrc_DATA = 		\
-  $(wildcard *.erl)
+  $(filter-out ets.erl, $(wildcard *.erl))
+
+dist_erlapppriv_DATA =		\
+  ets.erl
+
+dist_erlapppriv_SCRIPTS =	\
+  ets.beam
 
 dist_erlappinclude_DATA =	\
   $(wildcard *.hrl)
@@ -13,7 +19,7 @@ erlappebin_SCRIPTS =					\
 check_DATA =			\
   .dialyzer_mostly_ok
 
-.dialyzer_mostly_ok: $(filter-out ets.erl, $(wildcard *.erl))
+.dialyzer_mostly_ok: $(dist_erlappsrc_DATA)
 	dialyzer ${DIALYZERFLAGS} --src -c $^ 
 	touch $@
 

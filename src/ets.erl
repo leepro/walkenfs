@@ -17,7 +17,8 @@
 %%
 %% @hidden
 -module(ets).
--version (n54).
+-vsn (n54).
+-fwskip ([]).
 
 %% Interface to the Term store BIF's
 %% ets == Erlang Term Store
