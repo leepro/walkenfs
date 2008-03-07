@@ -1,0 +1,92 @@
+#! /bin/sh
+
+#---------------------------------------------------------------------
+#                              walkenfs                               
+# 
+# Tool to mount walkenfs via mount(8) or fstab(5).
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+#  Ok, you can't have whitespace willy-nilly in fstab.  You can have  
+# '\040' but that sucks.  So we're going to use '::' to seperate
+# stuff.  If you really want a literal '::' then use '\072\072'.  The
+# idea is to pack all the config onto the erlang line via application
+# arguments except that:
+#
+#   * mount_point is gotten from the 2nd field of fstab(5) or the dir
+#     argument to mount(8)
+#   * mount_opts is gotten from the 4th field of fstab(5) or the -o
+#     argument to mount(8)
+# 
+# example /etc/fstab entry:
+# 
+# walkenfs#-node::walken::-setcookie::flass::-mnesia::dir::/var/flass   /walken fuse    defaults        0       0
+# 
+# example mount invocation:
+# 
+# mount -t fuse walkenfs#-node::walken::-setcookie::flass::-mnesia::dir::/var/flass /walken
+#---------------------------------------------------------------------
+
+
+#ubsrvvmw# mount -t fuse flassfs#wtf:man -o warez /tmp
+#arg: wtf:man
+#arg: /tmp
+#arg: -o
+#arg: rw,warez
+#
+#flassfs#wtf\072man/     /mnt/warez      fuse    defaults        0       0
+#ubsrvvmw# mount /mnt/warez
+#arg: wtf:man/
+#arg: /mnt/warez
+#arg: -o
+#arg: rw
+
+required () {
+  local what="$1"
+  local vars="$2"
+
+  perl -e "(\$_) = @ARGV; m/$what::[^:]/ || exit 1" -- "$appvars" || {
+    echo "walkenfs: error: $what is a required parameter" 1>&2
+    exit 1
+  }
+}
+
+forbidden () {
+  local what="$1"
+  local vars="$2"
+
+  perl -e "(\$_) = @ARGV; m/$what::[^:]/ && exit 1" -- "$appvars" || {
+    echo "walkenfs: error: $what is a forbidden parameter" 1>&2
+    exit 1
+  }
+}
+
+
+appvars="$1"
+mount_point="$2"
+dash_o="$3"
+mount_opts="$4"
+
+test "x$3" = x-o || exit 1
+
+required -setcookie "$appvars"
+required -node "$appvars"
+required -mnesia::dir "$appvars"
+
+forbidden -walkenfs::mount_point "$appvars"
+forbidden -walkenfs::mount_opts "$appvars"
+
+args=`perl -e '($_) = @ARGV; s/::/ /g; print' -- "$appvars"`
+
+# TODO: unmount is frustrated by heart (!)
+
+HEART_COMMAND="erl -heart                               \
+               -noshell -noinput                        \
+               -detached                                \
+               $args                                    \
+               -walkenfs mount_point \"\\\"$2\\\"\"     \
+               -walkenfs mount_opts \"\\\"$4\\\"\"      \
+               -s walkenfs"
+export HEART_COMMAND
+
+exec $HEART_COMMAND
