@@ -1,3 +1,6 @@
+=Version 0.1.0=
+  * mount utility for mount(8) or fstab(5)
+
 =Version 0.0.2=
   * Change default mount point to /walken.
   * Provide app var to control whether bug fix to ets is used.

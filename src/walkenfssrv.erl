@@ -146,7 +146,17 @@ init ([ Prefix,
 
 handle_call (_Request, _From, State) -> { noreply, State }.
 handle_cast (_Request, State) -> { noreply, State }.
-handle_info (_Msg, State) -> { noreply, State }.
+handle_info ({ port_exit, { 'EXIT', _, normal } }, State) ->
+  case application:get_env (walkenfs, port_exit_stop) of
+    { ok, true } ->
+      % well, this is an unmount(8) ... (probably?)
+      spawn (fun () -> init:stop () end),
+      { stop, normal, State };
+    _ ->
+      { noreply, State }
+  end;
+handle_info (_Msg, State) -> 
+  { noreply, State }.
 code_change (_OldVsn, State, _Extra) -> { ok, State }.
 terminate (_Reason, _State) -> ok.
 
