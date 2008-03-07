@@ -9,8 +9,10 @@
 #---------------------------------------------------------------------
 #  Ok, you can't have whitespace willy-nilly in fstab.  You can have  
 # '\040' but that sucks.  So we're going to use '::' to seperate
-# stuff.  If you really want a literal '::' then use '\072\072'.  The
-# idea is to pack all the config onto the erlang line via application
+# stuff.  I won't support a literal '::' at this time through escaping
+# or anything.  If it's a problem, drop me an email.
+#
+# The idea is to pack all the config onto the erlang line via application
 # arguments except that:
 #
 #   * mount_point is gotten from the 2nd field of fstab(5) or the dir
@@ -20,11 +22,11 @@
 # 
 # example /etc/fstab entry:
 # 
-# walkenfs#-node::walken::-setcookie::flass::-mnesia::dir::/var/flass   /walken fuse    defaults        0       0
+# walkenfs#-mnesia::dir::/var/flass::-s::mnesia   /walken fuse    defaults        0       0
 # 
 # example mount invocation:
 # 
-# mount -t fuse walkenfs#-node::walken::-setcookie::flass::-mnesia::dir::/var/flass /walken
+# mount -t fuse walkenfs#-mnesia::dir::/var/flass::-s::mnesia /walken
 #---------------------------------------------------------------------
 
 
@@ -40,6 +42,16 @@
 #arg: /mnt/warez
 #arg: -o
 #arg: rw
+
+optional () {
+  local what="$1"
+  local vars="$2"
+  local default="$3"
+
+  local val=`perl -e "(\\\$_) = @ARGV; m/$what::([^:]+)/ && print \"\\\$1\"" -- "$2"`
+
+  printf "%s" "${val:-$default}"
+}
 
 required () {
   local what="$1"
@@ -61,32 +73,33 @@ forbidden () {
   }
 }
 
-
 appvars="$1"
 mount_point="$2"
 dash_o="$3"
 mount_opts="$4"
 
+HEART_COMMAND="'$0' '$1' '$2' '$3' '$4'"
+export HEART_COMMAND
+
 test "x$3" = x-o || exit 1
 
-required -setcookie "$appvars"
-required -node "$appvars"
+cookie=`optional -setcookie "$appvars" walken`
+name=`optional -name "$appvars" walken`
+
 required -mnesia::dir "$appvars"
 
 forbidden -walkenfs::mount_point "$appvars"
 forbidden -walkenfs::mount_opts "$appvars"
 
-args=`perl -e '($_) = @ARGV; s/::/ /g; print' -- "$appvars"`
+args=`perl -e '($_) = @ARGV; 
+               s/-setcookie::[^:]+//; 
+               s/-name::[^:]+//; 
+               s/::/ /g; 
+               print' -- "$appvars"`
 
-# TODO: unmount is frustrated by heart (!)
+export PATH
 
-HEART_COMMAND="erl -heart                               \
-               -noshell -noinput                        \
-               -detached                                \
-               $args                                    \
-               -walkenfs mount_point \"\\\"$2\\\"\"     \
-               -walkenfs mount_opts \"\\\"$4\\\"\"      \
-               -s walkenfs"
-export HEART_COMMAND
+ERL_CRASH_DUMP=/dev/null
+export ERL_CRASH_DUMP
 
-exec $HEART_COMMAND
+erl -heart -detached -setcookie "$cookie" -name $name $args -walkenfs mount_point "\"$2\"" -walkenfs mount_opts "\"$4\"" -s walkenfs 
