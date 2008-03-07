@@ -43,9 +43,15 @@ walkenfs attempting load of ets: auto_detect 32171741258962244498228487510553726
 Mnesia('3818@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
 ok
 }}}
-You should now have a walkenfs mounted at {{{/tmp/walken}}}.  Try stuff, see what happens. If you exit the Erlang shell it will get unmounted.
+You should now have a walkenfs mounted at {{{/tmp/walken}}}.  Try stuff, see what happens. [[#1 1]] If you exit the Erlang shell it will get unmounted.
 
 = Tested Platforms =
 
   * Ubuntu 64 bit Linux (feisty).
   * OS/X 10.4 i386: known *not* to work, I'm trying to figure it out.
+
+= Footnotes =
+
+== 1 ==
+
+Try things *outside* the Erlang emulator.  Otherwise you will find it very easy to deadlock the file server.  Not sure why this happens yet.
