@@ -1,6 +1,7 @@
 -module (walkenfs).
 -behaviour (application).
 -export ([ start/0,
+           start/1,
            start/2,
            stop/0,
            stop/1 ]).
@@ -14,8 +15,11 @@
 %% @hidden
 
 start () ->
+  start (permanent).
+
+start (Type) ->
   application:start (fuserl),
-  application:start (walkenfs).
+  application:start (walkenfs, Type).
 
 %% @hidden
 
