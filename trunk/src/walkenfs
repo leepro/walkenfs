@@ -103,3 +103,14 @@ ERL_CRASH_DUMP=/dev/null
 export ERL_CRASH_DUMP
 
 erl -heart -detached -setcookie "$cookie" -name $name $args -walkenfs mount_point "\"$2\"" -walkenfs mount_opts "\"$4\"" -s walkenfs 
+
+# if you uncomment all this stuff, you can get a better grip for debugging
+#
+#touch /tmp/sux
+#touch /tmp/sux.err
+#exec 1>>/tmp/sux
+#exec 2>>/tmp/sux.err
+#
+#(
+#  erl -boot start_sasl -heart -noinput -noshell -setcookie "$cookie" -name $name $args -walkenfs mount_point "\"$2\"" -walkenfs mount_opts "\"$4\"" -s walkenfs &
+#) &

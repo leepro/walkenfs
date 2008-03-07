@@ -146,7 +146,7 @@ init ([ Prefix,
 
 handle_call (_Request, _From, State) -> { noreply, State }.
 handle_cast (_Request, State) -> { noreply, State }.
-handle_info ({ port_exit, { 'EXIT', _, normal } }, State) ->
+handle_info ({ _, { exit_status, 0 } }, State) ->
   case application:get_env (walkenfs, port_exit_stop) of
     { ok, true } ->
       % well, this is an unmount(8) ... (probably?)
