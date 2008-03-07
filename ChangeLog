@@ -1,5 +1,7 @@
 =Version 0.1.0=
   * mount utility for mount(8) or fstab(5)
+  * very cheesy umount(8) story (for linked_in=false only)
+    need to figure out what the real story is here
 
 =Version 0.0.2=
   * Change default mount point to /walken.
