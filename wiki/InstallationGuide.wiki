@@ -50,4 +50,4 @@ You should now have a walkenfs mounted at {{{/tmp/walken}}}.  Try stuff, see wha
 
 == 1 ==
 
-Try things *outside* the Erlang emulator.  Otherwise you will find it very easy to deadlock the file server.  Not sure why this happens yet.
+Try things *outside* the Erlang emulator.  Otherwise you will find it very easy to deadlock the file server.  Not sure why this happens yet.  In our production systems we run walkenfs in a separate Erlang emulator and always will (Erlang being an "implementation detail").
