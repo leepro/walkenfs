@@ -15,6 +15,8 @@ Running {{{make check}}} is strongly suggested.
 
 = Hello World =
 
+== mkfs.walken ==
+
 No nice mkfs util or anything right now.[[#1 1]]  Here's essentially what a mkfs.walken would do for you.  Start the Erlang emulator
 
 {{{
@@ -50,6 +52,27 @@ ok
 (5975@ubsrvvmw)10>
 }}}
 in the emulator.
+
+== Mount ==
+
+Now you can add a line
+{{{
+walkenfs#-mnesia::dir::"/tmp/walkendata"::-s::mnesia    /tmp/walken     fuse    defaults,user   0       0
+}}}
+to {{{/etc/fstab}}} and then
+{{{
+% mount /tmp/walken
+}}}
+works.  Also
+{{{
+% sudo umount /tmp/walken
+}}}.
+
+== Next Steps ==
+
+So this walken mount you've just made is not that interesting because it is local to the box.[[#1 1]]  
+
+Stay tuned.
 
 = Tested Platforms =
 
