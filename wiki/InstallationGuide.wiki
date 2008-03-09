@@ -15,31 +15,42 @@ Running {{{make check}}} is strongly suggested.
 
 = Hello World =
 
-No nice mkfs util or anything right now ...
+No nice mkfs util or anything right now.  Here's essentially what a mkfs.walken would do for you.  Start the Erlang emulator
 
 {{{
 % erl -sname $$ +A 10                    
 Erlang (BEAM) emulator version 5.5.2 [source] [64-bit] [async-threads:0] [hipe] [kernel-poll:false]
 
 Eshell V5.5.2  (abort with ^G)
-(27221@ubsrvvmw)1> ok = mnesia:start ().
+(5975@ubsrvvmw)1> ok = application:load (mnesia).
 ok
-(27221@ubsrvvmw)2> { atomic, ok } = mnesia:change_table_copy_type (schema, node (), disc_copies).
+(5975@ubsrvvmw)2> application:set_env (mnesia, dir, "/tmp/walkendata").
+ok
+(5975@ubsrvvmw)3> mnesia:start ().
+ok
+(5975@ubsrvvmw)4> { atomic, ok } = mnesia:change_table_copy_type (schema, node (), disc_copies).
 {atomic,ok}
-(27221@ubsrvvmw)3> ok = application:load (walkenfs).
+(5975@ubsrvvmw)5> ok = application:load (walkenfs).
 ok
-(27221@ubsrvvmw)4> ok = application:set_env (walkenfs, mount_point, "/tmp/walken").
+(5975@ubsrvvmw)6> ok = application:set_env (walkenfs, mount_point, "/tmp/walken").
 ok
-(27221@ubsrvvmw)5> ok = file:make_dir ("/tmp/walken").
-ok
-(27221@ubsrvvmw)6> walkenfs:start ().
+(5975@ubsrvvmw)7> file:make_dir ("/tmp/walken").
+{error,eexist}
+(5975@ubsrvvmw)8> walkenfs:start ().
 
-=INFO REPORT==== 4-Mar-2008::22:48:02 ===
+=INFO REPORT==== 8-Mar-2008::19:10:27 ===
 walkenfs attempting load of ets: auto_detect 321717412589622444982284875105537266341
-Mnesia('3818@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
+Mnesia('5975@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
 ok
 }}}
-You should now have a walkenfs mounted at {{{/tmp/walken}}}.  Try stuff, see what happens. [[#1 1]] If you exit the Erlang shell it will get unmounted.  (There will also now be an directory named {{{Mnesia.XXXX@YYYY}}}, where XXXX is your process id and YYYY is your hostname, that contains the actual filesystem data).
+You should now have a walkenfs mounted at {{{/tmp/walken}}}.  The actual filesystem (mnesia) data is being stored in {{{/tmp/walkendata}}}.  Try stuff, see what happens. [[#1 1]] If you exit the Erlang shell it will get unmounted.  If you want to unmount cleanly, type
+{{{
+(5975@ubsrvvmw)9> init:stop ().
+ok
+(5975@ubsrvvmw)10>
+}}}
+in the emulator.
+
 
 = Tested Platforms =
 
