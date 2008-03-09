@@ -28,22 +28,18 @@ ok
 {atomic,ok}
 (27221@ubsrvvmw)3> ok = application:load (walkenfs).
 ok
-(27221@ubsrvvmw)4> ok = application:set_env (walkenfs, init_copies, 1).
+(27221@ubsrvvmw)4> ok = application:set_env (walkenfs, mount_point, "/tmp/walken").
 ok
-(27221@ubsrvvmw)5> ok = application:set_env (walkenfs, init_fragments, 1).
+(27221@ubsrvvmw)5> ok = file:make_dir ("/tmp/walken").
 ok
-(27221@ubsrvvmw)6> ok = application:set_env (walkenfs, mount_point, "/tmp/walken").
-ok
-(27221@ubsrvvmw)7> ok = file:make_dir ("/tmp/walken").
-ok
-(27221@ubsrvvmw)8> walkenfs:start ().
+(27221@ubsrvvmw)6> walkenfs:start ().
 
 =INFO REPORT==== 4-Mar-2008::22:48:02 ===
 walkenfs attempting load of ets: auto_detect 321717412589622444982284875105537266341
 Mnesia('3818@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
 ok
 }}}
-You should now have a walkenfs mounted at {{{/tmp/walken}}}.  Try stuff, see what happens. [[#1 1]] If you exit the Erlang shell it will get unmounted.
+You should now have a walkenfs mounted at {{{/tmp/walken}}}.  Try stuff, see what happens. [[#1 1]] If you exit the Erlang shell it will get unmounted.  (There will also now be an directory named {{{Mnesia.XXXX@YYYY}}}, where XXXX is your process id and YYYY is your hostname, that contains the actual filesystem data).
 
 = Tested Platforms =
 
