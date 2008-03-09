@@ -66,7 +66,8 @@ to {{{/etc/fstab}}} and then
 works.  Also
 {{{
 % sudo umount /tmp/walken
-}}}.
+}}}
+works, although I found that without the sudo umount complains about a mismatch between the mount and /etc/fstab (?)
 
 == Next Steps ==
 
