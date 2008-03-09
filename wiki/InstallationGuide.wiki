@@ -18,7 +18,7 @@ Running {{{make check}}} is strongly suggested.
 No nice mkfs util or anything right now.[[#1 1]]  Here's essentially what a mkfs.walken would do for you.  Start the Erlang emulator
 
 {{{
-% erl -name $$ +A 10                    
+% erl -name walken +A 10                    
 Erlang (BEAM) emulator version 5.5.2 [source] [64-bit] [async-threads:0] [hipe] [kernel-poll:false]
 
 Eshell V5.5.2  (abort with ^G)
