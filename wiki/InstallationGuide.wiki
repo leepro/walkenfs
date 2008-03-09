@@ -15,7 +15,7 @@ Running {{{make check}}} is strongly suggested.
 
 = Hello World =
 
-No nice mkfs util or anything right now.  Here's essentially what a mkfs.walken would do for you.  Start the Erlang emulator
+No nice mkfs util or anything right now.[[#1 1]]  Here's essentially what a mkfs.walken would do for you.  Start the Erlang emulator
 
 {{{
 % erl -sname $$ +A 10                    
@@ -43,7 +43,7 @@ walkenfs attempting load of ets: auto_detect 32171741258962244498228487510553726
 Mnesia('5975@ubsrvvmw'): User event: {fragmentron,create_table,schema_extra}
 ok
 }}}
-You should now have a walkenfs mounted at {{{/tmp/walken}}}.  The actual filesystem (mnesia) data is being stored in {{{/tmp/walkendata}}}.  Try stuff, see what happens. [[#1 1]] If you exit the Erlang shell it will get unmounted.  If you want to unmount cleanly, type
+You should now have a walkenfs mounted at {{{/tmp/walken}}}.  The actual filesystem (mnesia) data is being stored in {{{/tmp/walkendata}}}.  Try stuff, see what happens. [[#2 2]] If you exit the Erlang shell it will get unmounted.  If you want to unmount cleanly, type
 {{{
 (5975@ubsrvvmw)9> init:stop ().
 ok
@@ -59,6 +59,12 @@ in the emulator.
 
 = Footnotes =
 
-== 1 ==
+== 1 == 
+
+Why is there no mkfs.walken?  Because it boils down to specifying a distributed mnesia config.  Those who know how to do that (wizards!) would use the erlang shell to do it.  For the rest of us, or for those of us using EC2 where specifying the configuration manually is unrealistic given the dynamic nature of the custer, what's really needed is a way to automatically maintain the mnesia configuration as nodes are brought up and down.  We actually have a system to do the latter that we use in production, but I haven't had a chance to open source it yet.  When I do, I figure mkfs.walken can be written in terms of the minimal specification for the automatic configuration system.
+
+Stay tuned.
+
+== 2 ==
 
 Try things *outside* the Erlang emulator.  Otherwise you will find it very easy to deadlock the file server.  Not sure why this happens yet.  In our production systems we run walkenfs in a separate Erlang emulator and always will (Erlang being an "implementation detail").
