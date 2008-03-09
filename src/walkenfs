@@ -43,6 +43,10 @@
 #arg: -o
 #arg: rw
 
+is_alive () {
+  epmd -names | grep "^name $1 at port " >/dev/null 2>/dev/null
+}
+
 optional () {
   local what="$1"
   local vars="$2"
@@ -85,6 +89,12 @@ test "x$3" = x-o || exit 1
 
 cookie=`optional -setcookie "$appvars" walken`
 name=`optional -name "$appvars" walken`
+
+if is_alive "$name"
+  then
+    echo "another walken server '$name' is already running." 1>&2
+    exit 1
+  fi
 
 required -mnesia::dir "$appvars"
 
