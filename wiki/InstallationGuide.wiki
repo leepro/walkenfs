@@ -57,7 +57,7 @@ in the emulator.
 
 Now you can add a line
 {{{
-walkenfs#-mnesia::dir::"/tmp/walkendata"::-s::mnesia    /tmp/walken     fuse    defaults,user   0       0
+walkenfs#-mnesia::dir::"/tmp/walkendata"::-s::mnesia    /tmp/walken     fuse    defaults,user,noauto   0       0
 }}}
 to {{{/etc/fstab}}} and then
 {{{
