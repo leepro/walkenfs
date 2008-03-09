@@ -18,7 +18,7 @@ Running {{{make check}}} is strongly suggested.
 No nice mkfs util or anything right now.[[#1 1]]  Here's essentially what a mkfs.walken would do for you.  Start the Erlang emulator
 
 {{{
-% erl -sname $$ +A 10                    
+% erl -name $$ +A 10                    
 Erlang (BEAM) emulator version 5.5.2 [source] [64-bit] [async-threads:0] [hipe] [kernel-poll:false]
 
 Eshell V5.5.2  (abort with ^G)
@@ -35,7 +35,7 @@ ok
 (5975@ubsrvvmw)6> ok = application:set_env (walkenfs, mount_point, "/tmp/walken").
 ok
 (5975@ubsrvvmw)7> file:make_dir ("/tmp/walken").
-{error,eexist}
+ok
 (5975@ubsrvvmw)8> walkenfs:start ().
 
 =INFO REPORT==== 8-Mar-2008::19:10:27 ===
@@ -50,7 +50,6 @@ ok
 (5975@ubsrvvmw)10>
 }}}
 in the emulator.
-
 
 = Tested Platforms =
 
