@@ -37,12 +37,12 @@
            symlink/6,
            write/7 ]).
 
--include_lib ("eunit/include/eunit.hrl").
 -include_lib ("fuserl/include/fuserl.hrl").
 -include ("walkenfs.hrl").
 
--ifdef (EUNIT).
--include_lib("kernel/include/file.hrl").
+-ifdef (HAVE_EUNIT).
+-include_lib ("eunit/include/eunit.hrl").
+-include_lib ("kernel/include/file.hrl").
 -endif.
 
 -ifdef (FLASS).

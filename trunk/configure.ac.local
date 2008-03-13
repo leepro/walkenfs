@@ -20,7 +20,9 @@ case "$host_os" in
     ;;
 esac
 
-FW_TEMPLATE_ERLANG_CHECK_MODULE([eunit], ,
-                                [AC_MSG_WARN([need eunit to run tests])])
+FW_TEMPLATE_ERLANG_EUNIT_CHECK()
 
-FW_ERLANG_ENABLE_ERLRC_DEFAULT=0
+if test -z "$FW_EUNIT_ERLCFLAGS"
+  then
+    AC_MSG_WARN([need eunit to run tests])
+  fi

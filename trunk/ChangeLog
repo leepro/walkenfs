@@ -1,3 +1,6 @@
+=Version 0.1.2= [ NOT YET RELEASED ]
+  * Don't require eunit to build.
+
 =Version 0.1.1=
   * mount idempotency
 
