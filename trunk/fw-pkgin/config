@@ -14,7 +14,9 @@ FW_PACKAGE_ARCHITECTURE_DEPENDENT="0"
 # 
 # For other packaging systems, the syntax is translated for you.
 
-FW_PACKAGE_DEPENDS="fragmentron, fuserl"
+FW_PACKAGE_DEPENDS="fragmentron, 
+                    fuserl,
+                    schemafinder"
 FW_PACKAGE_CONFLICTS=""
 FW_PACKAGE_PROVIDES=""
 FW_PACKAGE_REPLACES=""
