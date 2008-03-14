@@ -26,3 +26,5 @@ if test -z "$FW_EUNIT_ERLCFLAGS"
   then
     AC_MSG_WARN([need eunit to run tests])
   fi
+
+FW_ERLANG_ENABLE_ERLRC=0
