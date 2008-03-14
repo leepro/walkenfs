@@ -39,7 +39,7 @@ erl_host () {
 }
 
 walken_running () {
-  epmd -names 2>/dev/null | grep walken >/dev/null 2>/dev/null
+  { epmd -names 2>/dev/null | grep walken; } >/dev/null 2>/dev/null
 }
 
 wait_for_walkenfs_running () {
