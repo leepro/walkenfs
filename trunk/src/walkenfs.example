@@ -1,0 +1,146 @@
+#! /bin/sh
+
+#---------------------------------------------------------------------
+#                  Example init script for walkenfs                   
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+#                        Change these settings                        
+#---------------------------------------------------------------------
+
+cookie=yourcookie               # erlang node cookie
+initfragments=1260              # maximum size of filesystem is 2Gb / fragment
+                                # initial disk usage is about 10Kb / fragment
+datadir=/tmp/walken-data        # where to store the data
+mountpoint=/tmp/walken          # where to mount the filesystem
+
+#---------------------------------------------------------------------
+#                      End change these settings                      
+#---------------------------------------------------------------------
+
+ERL_CRASH_DUMP=${ERL_CRASH_DUMP-/dev/null}
+export ERL_CRASH_DUMP
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+export PATH
+
+HOME=${HOME-/root}
+export HOME
+
+walkenfs_args="-setcookie::$cookie::-mnesia::dir::\"$datadir\"::-s::combonodefinder::-schemafinder::group::walken::-s::schemafinder::-walkenfs::init_fragments::$initfragments"
+
+MOUNT="mount -o nonempty,allow_other,default_permissions"
+
+erl_host () {
+  erl -name walkenshell$$ -hidden -noshell -noinput -eval '
+    Host = lists:last (string:tokens (atom_to_list (node ()), "@")),
+    io:format ("~s", [ Host ]).
+  ' -s erlang halt
+}
+
+walken_running () {
+  epmd -names 2>/dev/null | grep walken >/dev/null 2>/dev/null
+}
+
+wait_for_walkenfs_running () {
+  erl -name walkenmount$$ -hidden 					\
+      -noshell -noinput -setcookie "$1" -eval '
+    Host = lists:last (string:tokens (atom_to_list (node ()), "@")),
+    Other = list_to_atom ("walken@" ++ Host),
+    Next = fun ("|") -> "/";
+               ("/") -> "-";
+               ("-") -> "\\";
+               ("\\") -> "|"
+           end,
+    F = fun (G, Test, Spin, N) when N > 0 -> 
+          case Test () of 
+            true -> ok; 
+            false -> timer:sleep (1000), 
+                     io:format ("\b~s", [ Spin ]), 
+                     G (G, Test, Next (Spin), N - 1)
+	  end;
+            (_, _, _, _) -> failed
+        end,
+    case F (F, fun () -> net_kernel:connect_node (Other) end, "|", 30) of
+      ok -> ok;
+      failed -> io:format ("\btimeout.~n", [ ]), halt (1)
+    end,
+    case F (F, 
+            fun () ->    
+              lists:keymember (walkenfs, 
+                               1,
+                               rpc:call (Other, 
+                                         application,
+                                         which_applications, 
+                                         []))
+            end,
+            "|",
+            30) of
+      ok -> io:format ("\bdone.~n", [ ]);
+      failed -> io:format ("\btimeout.~n", [ ]), halt (1)
+    end.
+  ' -s erlang halt 
+}
+
+do_mount () {
+  printf "%s" "mounting walkenfs on '$mountpoint' ... "
+  if walken_running
+    then
+      echo "already running."
+    else
+      test -d "$mountpoint" || mkdir "$mountpoint" || exit 1
+      $MOUNT -t fuse "walkenfs#$walkenfs_args" "$mountpoint" || exit 1
+      wait_for_walkenfs_running "$cookie" 
+    fi
+}
+
+do_umount () {
+  if walken_running
+    then
+      printf "%s" "unmounting walkenfs on '$mountpoint' ..."
+
+      # can't use hidden here if we want net_kernel:monitor_nodes/1
+      # so instead use net_kernel:allow/1
+
+      erl -name walkenumount$$ -kernel dist_auto_connect never  \
+          -noshell -noinput -setcookie "$cookie" -eval '
+        Host = lists:last (string:tokens (atom_to_list (node ()), "@")),
+        Other = list_to_atom ("walken@" ++ Host),
+        ok = net_kernel:allow ([ Other ]),
+        true = net_kernel:connect_node (Other),
+        ok = net_kernel:monitor_nodes (true),
+        ok = rpc:call (Other, init, stop, []),
+        receive { nodedown, Other } -> io:format ("done.~n", [])
+                after 10000 -> io:format ("timeout.~n", []), erlang:halt (1)
+        end.
+      ' -s erlang halt
+    fi
+}
+
+case "$1" in 
+  start) 
+    do_mount
+    ;;
+  stop)
+    [ `id -u` = 0 ] || {
+      echo "only root can do that." 1>&2
+      exit 1
+    }
+
+    do_umount
+    ;;
+  restart)
+    "$0" stop && "$0" start
+    ;;
+  status)
+    if walken_running
+      then
+        echo "walkenfs is running."
+      else
+        echo "walkenfs is not running."
+      fi
+    ;;
+  *)
+    echo "usage: $0 [start|stop|restart|status]" 1>&2
+    ;;
+esac
