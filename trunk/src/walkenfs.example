@@ -103,6 +103,7 @@ do_umount () {
       # so instead use net_kernel:allow/1
 
       erl -name walkenumount$$ -kernel dist_auto_connect never  \
+          -kernel error_logger silent                           \
           -noshell -noinput -setcookie "$cookie" -eval '
         Host = lists:last (string:tokens (atom_to_list (node ()), "@")),
         Other = list_to_atom ("walken@" ++ Host),
