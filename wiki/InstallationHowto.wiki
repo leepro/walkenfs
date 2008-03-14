@@ -54,7 +54,7 @@ In the downloads section there is an
 script] which starts and stops walkenfs.
 
 If you're using walkenfs on EC2, do not create the walkenfs filesystem
-on your image stored in S3.  Instead let walkenfs autocreate it 
+on your image stored in S3; this doesn't work because the node name will be different when the image is booted.  Instead let walkenfs autocreate it 
 when your image boots up.  This implies walkenfs needs to be started
 after the network is up so it can find it's Erlang peers via schemafinder.
 
