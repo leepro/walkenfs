@@ -74,6 +74,9 @@
                   write_meta_context,
                   xattr_table }).
 
+-define (walkenfs_error_msg (A, B), 
+         error_logger:error_msg ("~p ~p: " ++ A, [ ?FILE, ?LINE ] ++ B)).
+
 %-=====================================================================-
 %-                                Public                               -
 %-=====================================================================-
@@ -466,10 +469,12 @@ access_async (Ctx, Inode, Mask, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = ok });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ -> 
+    exit : X -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -519,10 +524,12 @@ create_async (Ctx, ParentInode, Name, Mode, Fi, Cont, State) ->
       fuserlsrv:reply (Cont, Reply);
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -622,7 +629,9 @@ do_lookup (Parent, Name, State) ->
        [],
        mnesia_frag) 
   catch
-    exit : Y -> { aborted, Y }
+    exit : Y -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ Y ]),
+      { aborted, Y }
   end.
 
 % TODO: universal_time ... but not supported in r11b-2 (?)
@@ -667,7 +676,9 @@ do_mknod (Ctx, ParentInode, Name, Mode, _Dev, State) ->
        [],
        mnesia_frag) 
   catch 
-    exit : Y -> { aborted, Y }
+    exit : Y -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ Y ]),
+      { aborted, Y }
   end.
 
 do_open (Inode, Fi, State) ->
@@ -694,7 +705,9 @@ do_open (Inode, Fi, State) ->
        [],
        mnesia_frag) 
   catch
-    exit : Y -> { aborted, Y }
+    exit : Y -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ Y ]),
+      { aborted, Y }
   end.
 
 getattr_async (_Ctx, Inode, Cont, State) ->
@@ -718,10 +731,12 @@ getattr_async (_Ctx, Inode, Cont, State) ->
                                            State#state.attr_timeout_ms });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ -> 
+    exit : X -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -755,10 +770,12 @@ getxattr_async (_Ctx, Inode, Name, Size, Cont, State) ->
                                               buf = Value });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -852,10 +869,12 @@ link_async (_Ctx, Inode, NewParent, NewName, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_entry{ fuse_entry_param = P });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ -> 
+    exit : X -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -910,7 +929,8 @@ listxattr_async (_Ctx, Inode, Size, Cont, State) ->
                                                           || X <- Names ] })
       end
   catch
-    exit : _ -> 
+    exit : X -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -920,7 +940,8 @@ lookup_async (_Ctx, Parent, Name, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_entry{ fuse_entry_param = Param });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -961,7 +982,8 @@ mknod_async (Ctx, ParentInode, Name, Mode, Dev, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_entry{ fuse_entry_param = Param });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -971,7 +993,8 @@ open_async (_Ctx, Inode, Fi, Cont, State) ->
       fuserlsrv:reply (Cont, Open);
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1005,7 +1028,8 @@ read_async (_Ctx, Inode, Size, Offset, _Fi, Cont, State) ->
     { ok, Count, IoList } ->
       fuserlsrv:reply (Cont, #fuse_reply_buf{ size = Count, buf = IoList })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1082,10 +1106,12 @@ readdir_async (_Ctx, Inode, Size, Offset, _Fi, Cont, State) ->
                        #fuse_reply_direntrylist{ direntrylist = Entries });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1161,10 +1187,12 @@ readlink_async (_Ctx, Inode, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_readlink{ link = Link });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1186,10 +1214,12 @@ removexattr_async (_Ctx, Inode, Name, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = ok });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1214,10 +1244,12 @@ rename_async (_Ctx, Parent, Name, NewParent, NewName, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = ok });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ -> 
+    exit : X -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1244,10 +1276,12 @@ rmdir_async (_Ctx, ParentInode, Name, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = ok });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ -> 
+    exit : X -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1279,10 +1313,12 @@ setxattr_async (_Ctx, Inode, Name, Value, Flags, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = ok });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ -> 
+    exit : X -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1297,10 +1333,12 @@ unlink_async (_Ctx, Parent, Name, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = ok });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ -> 
+    exit : X -> 
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1393,10 +1431,12 @@ setattr_async (_Ctx, Inode, Attr, ToSet, _Fi, Cont, State) ->
                                            State#state.attr_timeout_ms });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1440,7 +1480,8 @@ statfs_async (_Ctx, _Inode, Cont, State) ->
     S = #statvfs{} ->
       fuserlsrv:reply (Cont, #fuse_reply_statfs{ statvfs = S })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1465,10 +1506,12 @@ symlink_async (Ctx, Link, Inode, Name, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_entry{ fuse_entry_param = Param });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
@@ -1535,10 +1578,12 @@ write_async (_Ctx, Inode, Data, Offset, _Fi, Cont, State) ->
       fuserlsrv:reply (Cont, #fuse_reply_write{ count = Count });
     { error, Reason } ->
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = Reason });
-    _ ->
+    X ->
+      ?walkenfs_error_msg ("unexpected result ~p ~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   catch
-    exit : _ ->
+    exit : X ->
+      ?walkenfs_error_msg ("caught exit : ~p~n", [ X ]),
       fuserlsrv:reply (Cont, #fuse_reply_err{ err = eio })
   end.
 
