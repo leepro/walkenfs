@@ -1,4 +1,4 @@
-#summary wiki is misbehaving; these are the real installation hints; ignore the others
+#summary Installation Hints
 #labels Featured,Phase-Deploy
 
 = Prerequisites =
