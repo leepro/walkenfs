@@ -1118,11 +1118,16 @@ readdir_async (_Ctx, Inode, Size, Offset, _Fi, Cont, State) ->
 readdir_add_entries (NewElements, Size, InitOffset, Elements, State) ->
   take_while (fun (#directory_entry{ id = { _, Name }, inode = Inode },
                    { Offset, Total, Max }) ->
-                [ #inode{ stat = S } ] = mnesia:read (State#state.inode_table,
-                                                      Inode,
-                                                      read),
-                E = #direntry{ name = Name, offset = Offset + 1, stat = S },
-
+                E = 
+                  case mnesia:read (State#state.inode_table, Inode, read) of
+                    [] ->
+                      #direntry{ name = "__inode_" ++ integer_to_list (Inode),
+                                 offset = Offset + 1,
+                                 stat = #stat{} };
+                    [ #inode{ stat = S } ] ->
+                      #direntry{ name = Name, offset = Offset + 1, stat = S }
+                  end,
+    
                 Cur = fuserlsrv:dirent_size (E),
                 if
                   Total + Cur =< Max ->
