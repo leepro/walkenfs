@@ -1,0 +1,4 @@
+@author Paul Mineiro
+@copyright 2008, Released under New BSD License
+@title Walkenfs
+@doc Walkenfs is a distributed filesystem written in Erlang.  It aims for walken compliance.
