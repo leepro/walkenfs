@@ -50,8 +50,7 @@ make walkenfs act normally with respect to file access permissions.
 You might also want a bigger filesystem.
 
 In the downloads section there is an
-[http://walkenfs.googlecode.com/files/walkenfs.example.txt example init
-script] which starts and stops walkenfs.
+[http://walkenfs.googlecode.com/files/walkenfs.example.txt example init script] which starts and stops walkenfs.
 
 If you're using walkenfs on EC2, do not create the walkenfs filesystem
 on your image stored in S3; this doesn't work because the node name will be different when the image is booted.  Instead let walkenfs autocreate it 
