@@ -49,7 +49,7 @@ mount and umount, plus you want to set all the fuse mount options that
 make walkenfs act normally with respect to file access permissions.
 You might also want a bigger filesystem.
 
-In the source distributed there is an
+There is an
 [http://code.google.com/p/walkenfs/source/browse/trunk/src/walkenfs.example example init script] which starts and stops walkenfs.
 
 If you're using walkenfs on EC2, do not create the walkenfs filesystem
