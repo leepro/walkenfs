@@ -1,3 +1,7 @@
+=Version 0.1.6=
+  * even better handling of readdir with bad inode reference
+  * default redundancy of 3
+
 =Version 0.1.5=
   * handle readdir with bad inode reference
 

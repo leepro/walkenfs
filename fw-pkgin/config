@@ -2,7 +2,7 @@
 # environment variable FW_PACKAGE_DEFAULT_MAINTAINER if non-empty
 
 FW_PACKAGE_NAME="walkenfs"
-FW_PACKAGE_VERSION="0.1.5"
+FW_PACKAGE_VERSION="0.1.6"
 FW_PACKAGE_MAINTAINER="Paul Mineiro <paul-fw@mineiro.com>"
 FW_PACKAGE_SHORT_DESCRIPTION="Distributed filesystem."
 FW_PACKAGE_DESCRIPTION="`cat README`"
@@ -42,7 +42,7 @@ FW_ERL_APP_ENVIRONMENT="[ { linked_in, false },
                           { start_timeout, infinity },
                           { stop_timeout, 1800000 },
                           { init_fragments, 7 },
-                          { init_copies, 1 },
+                          { init_copies, 3 },
                           { copy_type, n_disc_only_copies },
                           { buggy_ets, auto_detect },
                           { port_exit_stop, true } ]"

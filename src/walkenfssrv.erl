@@ -1121,9 +1121,9 @@ readdir_add_entries (NewElements, Size, InitOffset, Elements, State) ->
                 E = 
                   case mnesia:read (State#state.inode_table, Inode, read) of
                     [] ->
-                      #direntry{ name = "__inode_" ++ integer_to_list (Inode),
+                      #direntry{ name = Name,
                                  offset = Offset + 1,
-                                 stat = #stat{} };
+                                 stat = #stat{ st_ino = Inode } };
                     [ #inode{ stat = S } ] ->
                       #direntry{ name = Name, offset = Offset + 1, stat = S }
                   end,
