@@ -11,7 +11,7 @@
      * others: ???
   1. [http://code.google.com/p/fuserl fuserl] 
   1. [http://code.google.com/p/fragmentron fragmentron]
-  1. [http://code.google.com/p/schemafinder schemafinder] not technically required but highly recommended, since otherwise the examples below will not work.
+  1. [http://code.google.com/p/schemafinder schemafinder] not technically required but highly recommended, since otherwise the examples below will not work, and you have to really know mnesia to get anywhere.
   1. [http://support.process-one.net/doc/display/CONTRIBS/EUnit eunit] from process one; optional but 'make check' will not do anything without it.
 
 = Installing =
