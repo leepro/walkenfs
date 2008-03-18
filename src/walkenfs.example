@@ -27,7 +27,7 @@ export PATH
 HOME=${HOME-/root}
 export HOME
 
-walkenfs_args="-setcookie::$cookie::-mnesia::dir::\"$datadir\"::-s::combonodefinder::-schemafinder::group::walken::-s::schemafinder::-walkenfs::init_fragments::$initfragments"
+walkenfs_args="+A::10::-setcookie::$cookie::-mnesia::dir::\"$datadir\"::-s::combonodefinder::-schemafinder::group::walken::-s::schemafinder::-walkenfs::init_fragments::$initfragments"
 
 MOUNT="mount -o nonempty,allow_other,default_permissions"
 
