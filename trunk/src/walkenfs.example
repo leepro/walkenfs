@@ -43,8 +43,12 @@ walken_running () {
 }
 
 wait_for_walkenfs_running () {
+  test -t 1
+  isatty=$?
+
   erl -name walkenmount$$ -hidden 					\
       -noshell -noinput -setcookie "$1" -eval '
+    Tty = case hd (init:get_plain_arguments ()) of "0" -> true; _ -> false end,
     Host = lists:last (string:tokens (atom_to_list (node ()), "@")),
     Other = list_to_atom ("walken@" ++ Host),
     Next = fun ("|") -> "/";
@@ -56,7 +60,7 @@ wait_for_walkenfs_running () {
           case Test () of 
             true -> ok; 
             false -> timer:sleep (1000), 
-                     io:format ("\b~s", [ Spin ]), 
+                     if Tty -> io:format ("\b~s", [ Spin ]); true -> ok end,
                      G (G, Test, Next (Spin), N - 1)
 	  end;
             (_, _, _, _) -> failed
@@ -79,7 +83,7 @@ wait_for_walkenfs_running () {
       ok -> io:format ("\bdone.~n", [ ]);
       failed -> io:format ("\btimeout.~n", [ ]), halt (1)
     end.
-  ' -s erlang halt 
+  ' -s erlang halt -extra "$isatty"
 }
 
 do_mount () {
