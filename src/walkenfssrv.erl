@@ -1082,7 +1082,7 @@ readdir_async (_Ctx, Inode, Size, Offset, _Fi, Cont, State) ->
              { Action, { RevElements, { _, CurSize, Size } } } = 
                readdir_add_entries (lists:nthtail (Offset, Objects),
                                     Size,
-                                    0,
+                                    Offset,
                                     [],
                                     State),
 
@@ -1144,6 +1144,7 @@ readdir_entries (Cont, Size, CurOffset, Offset, State, Acc) ->
     '$end_of_table' ->
       lists:reverse (Acc);
     { Objects, NewCont } when CurOffset + length (Objects) < Offset ->
+
       readdir_entries (NewCont, 
                        Size,
                        CurOffset + length (Objects),
@@ -1155,7 +1156,7 @@ readdir_entries (Cont, Size, CurOffset, Offset, State, Acc) ->
         readdir_add_entries (lists:nthtail (max (Offset - CurOffset, 0),
                                             Objects), 
                              Size, 
-                             CurOffset,
+                             CurOffset + max (Offset - CurOffset, 0),
                              Acc,
                              State),
 
@@ -1165,9 +1166,7 @@ readdir_entries (Cont, Size, CurOffset, Offset, State, Acc) ->
         continue ->
           readdir_entries (NewCont, 
                            Size - CurSize, 
-                           CurOffset 
-                           + length (Objects) 
-                           - max (Offset - CurOffset, 0),
+                           CurOffset + length (Objects),
                            Offset,
                            State,
                            RevElements)
