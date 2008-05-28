@@ -1,0 +1,8 @@
+TESTS = 		\
+  module-walkenfssrv
+
+check_PROGRAMS =	\
+  xattr
+
+xattr_SOURCES =		\
+  xattr.c
