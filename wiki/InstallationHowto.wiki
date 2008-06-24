@@ -16,7 +16,7 @@
 
 = Installing =
 
-The project uses automake.  The default prefix is /usr; if you don't like that, use the {{{--prefix}}} option to configure.
+The project uses automake[[#2 2]].  The default prefix is /usr; if you don't like that, use the {{{--prefix}}} option to configure.
 
 Running {{{make check}}} is strongly suggested.
 
@@ -71,3 +71,7 @@ a distributed mnesia config.  Those who know how to do that (wizards!)
 would use the erlang shell to do it.  For the rest of us schemafinder
 is the way to go, especially on EC2 where specifying the configuration
 manually is unrealistic given the dynamic nature of the cluster.
+
+== 2 ==
+
+More precisely, downloadable source tarballs use automake to build. A source code checkout of the repository uses [http://code.google.com/p/framewerk fwtemplates] to build, and if you don't know what that is, you probably want to stick with the tarballs.
