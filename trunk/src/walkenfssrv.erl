@@ -45,12 +45,6 @@
 -include_lib ("kernel/include/file.hrl").
 -endif.
 
--ifdef (FLASS).
--define (YO (X, Y), io:format (user, X, Y)).
--else.
--define (YO (X, Y), ok).
--endif.
-
 -define (is_bool (X), (((X) =:= true) or ((X) =:= false))).
 -define (is_string_like (X), (is_list (X) and 
                               (length (X) =:= 0 orelse is_integer (hd (X))))).
@@ -166,14 +160,12 @@ terminate (_Reason, _State) -> ok.
 %% @hidden
 
 access (Ctx, Inode, Mask, Cont, State) ->
-  ?YO ("access~n", []),
   spawn_link (fun () -> access_async (Ctx, Inode, Mask, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 create (Ctx, ParentInode, Name, Mode, Fi, Cont, State) ->
-  ?YO ("create~n", []),
   spawn_link 
     (fun () -> 
        create_async (Ctx, ParentInode, Name, Mode, Fi, Cont, State)
@@ -183,31 +175,26 @@ create (Ctx, ParentInode, Name, Mode, Fi, Cont, State) ->
 %% @hidden
 
 flush (_Ctx, _Inode, _Fi, _Cont, State) ->
-  ?YO ("flush~n", []),
   { #fuse_reply_err{ err = ok }, State }.
 
 %% @hidden
 
 forget (_Ctx, _Inode, _Nlookup, _Cont, State) ->
-  ?YO ("forget~n", []),
   { #fuse_reply_none{}, State }.
 
 %% @hidden
 
 fsync (_Ctx, _Inode, _IsDataSync, _Fi, _Cont, State) ->
-  ?YO ("fsync~n", []),
   { #fuse_reply_err{ err = ok }, State }.
 
 %% @hidden
 
 fsyncdir (_Ctx, _Inode, _IsDataSync, _Fi, _Cont, State) ->
-  ?YO ("fsyncdir~n", []),
   { #fuse_reply_err{ err = ok }, State }.
 
 %% @hidden
 
 getattr (Ctx, Inode, Cont, State) ->
-  ?YO ("getattr~n", []),
   spawn_link (fun () -> getattr_async (Ctx, Inode, Cont, State) end),
   { noreply, State }.
 
@@ -216,7 +203,6 @@ getattr (Ctx, Inode, Cont, State) ->
 getxattr (_Ctx, _Inode, <<"system.", _/binary>>, _Size, _Cont, State) ->
   { #fuse_reply_err{ err = enotsup }, State };
 getxattr (Ctx, Inode, Name, Size, Cont, State) ->
-  ?YO ("getxattr~n", []),
   spawn_link (fun () -> getxattr_async (Ctx,
                                         Inode,
                                         Name,
@@ -229,7 +215,6 @@ getxattr (Ctx, Inode, Name, Size, Cont, State) ->
 %% @hidden
 
 link (Ctx, Inode, NewParent, NewName, Cont, State) ->
-  ?YO ("link~n", []),
   spawn_link 
     (fun () -> link_async (Ctx, Inode, NewParent, NewName, Cont, State) end),
   { noreply, State }.
@@ -237,21 +222,18 @@ link (Ctx, Inode, NewParent, NewName, Cont, State) ->
 %% @hidden
 
 listxattr (Ctx, Inode, Size, Cont, State) ->
-  ?YO ("listxattr~n", []),
   spawn_link (fun () -> listxattr_async (Ctx, Inode, Size, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 lookup (Ctx, Parent, Name, Cont, State) ->
-  ?YO ("lookup~n", []),
   spawn_link (fun () -> lookup_async (Ctx, Parent, Name, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 mkdir (Ctx, ParentInode, Name, Mode, Cont, State) ->
-  ?YO ("mkdir~n", []),
   mknod (Ctx, ParentInode, Name, Mode bor ?S_IFDIR, { 0, 0 }, Cont, State).
 
 %% @hidden
@@ -260,7 +242,6 @@ mkdir (Ctx, ParentInode, Name, Mode, Cont, State) ->
 % could be opened on different machines.
 
 mknod (Ctx, ParentInode, Name, Mode, Dev, Cont, State) ->
-  ?YO ("mknod~n", []),
   case Mode band ?S_IFMT of
     N when ((N =:= ?S_IFLNK) or 
             (N =:= ?S_IFREG) or 
@@ -278,21 +259,18 @@ mknod (Ctx, ParentInode, Name, Mode, Dev, Cont, State) ->
 %% @hidden
 
 open (Ctx, Inode, Fi, Cont, State) ->
-  ?YO ("open~n", []),
   spawn_link (fun () -> open_async (Ctx, Inode, Fi, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 opendir (Ctx, Inode, Fi, Cont, State) ->
-  ?YO ("opendir~n", []),
   spawn_link (fun () -> open_async (Ctx, Inode, Fi, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 read (Ctx, Inode, Size, Offset, Fi, Cont, State) ->
-  ?YO ("read~n", []),
   spawn_link (fun () -> read_async (Ctx,
                                     Inode,
                                     Size,
@@ -306,7 +284,6 @@ read (Ctx, Inode, Size, Offset, Fi, Cont, State) ->
 %% @hidden
 
 readdir (Ctx, Inode, Size, Offset, Fi, Cont, State) ->
-  ?YO ("readdir~n", []),
   spawn_link (fun () -> readdir_async (Ctx,
                                        Inode,
                                        Size,
@@ -320,33 +297,28 @@ readdir (Ctx, Inode, Size, Offset, Fi, Cont, State) ->
 %% @hidden
 
 readlink (Ctx, Inode, Cont, State) ->
-  ?YO ("readlink~n", []),
   spawn_link (fun () -> readlink_async (Ctx, Inode, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 release (_Ctx, _Inode, _Fi, _Cont, State) ->
-  ?YO ("release~n", []),
   { #fuse_reply_err{ err = ok }, State }.
 
 %% @hidden
 
 releasedir (_Ctx, _Inode, _Fi, _Cont, State) ->
-  ?YO ("releasedir~n", []),
   { #fuse_reply_err{ err = ok }, State }.
 
 %% @hidden
 
 removexattr (Ctx, Inode, Name, Cont, State) ->
-  ?YO ("removexattr~n", []),
   spawn_link (fun () -> removexattr_async (Ctx, Inode, Name, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 rename (Ctx, Parent, Name, NewParent, NewName, Cont, State) ->
-  ?YO ("rename~n", []),
   spawn_link (fun () -> rename_async (Ctx,
                                       Parent,
                                       Name,
@@ -360,14 +332,12 @@ rename (Ctx, Parent, Name, NewParent, NewName, Cont, State) ->
 %% @hidden
 
 rmdir (Ctx, ParentInode, Name, Cont, State) ->
-  ?YO ("rmdir~n", []),
   spawn_link (fun () -> rmdir_async (Ctx, ParentInode, Name, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 setxattr (Ctx, Inode, Name, Value, Flags, Cont, State) ->
-  ?YO ("setxattr~n", []),
   spawn_link (fun () -> setxattr_async (Ctx,
                                         Inode,
                                         Name,
@@ -381,14 +351,12 @@ setxattr (Ctx, Inode, Name, Value, Flags, Cont, State) ->
 %% @hidden
 
 unlink (Ctx, Parent, Name, Cont, State) ->
-  ?YO ("unlink~n", []),
   spawn_link (fun () -> unlink_async (Ctx, Parent, Name, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 setattr (Ctx, Inode, Attr, ToSet, Fi, Cont, State) ->
-  ?YO ("setattr~n", []),
   spawn_link (fun () -> setattr_async (Ctx,
                                        Inode,
                                        Attr,
@@ -402,14 +370,12 @@ setattr (Ctx, Inode, Attr, ToSet, Fi, Cont, State) ->
 %% @hidden
 
 statfs (Ctx, Inode, Cont, State) ->
-  ?YO ("statfs~n", []),
   spawn_link (fun () -> statfs_async (Ctx, Inode, Cont, State) end),
   { noreply, State }.
 
 %% @hidden
 
 symlink (Ctx, Link, Inode, Name, Cont, State) ->
-  ?YO ("symlink~n", []),
   spawn_link (fun () -> symlink_async (Ctx,
                                        Link,
                                        Inode,
@@ -422,7 +388,6 @@ symlink (Ctx, Link, Inode, Name, Cont, State) ->
 %% @hidden
 
 write (Ctx, Inode, Data, Offset, Fi, Cont, State) ->
-  ?YO ("write~n", []),
   spawn_link (fun () -> write_async (Ctx,
                                      Inode,
                                      Data,
