@@ -31,4 +31,4 @@ check_DATA =			\
 	dialyzer ${DIALYZERFLAGS} --src -c $^ 
 	touch $@
 
-DIALYZERFLAGS = -q
+DIALYZERFLAGS += -q
