@@ -16,6 +16,8 @@
 
 = Installing =
 
+Do NOT attempt to build from a checkout from the source code repository: that is for wizards only. Instead, grab one of the released source tarballs from the [http://code.google.com/p/walkenfs/downloads/list downloads] tab. 
+
 The project uses automake[[#2 2]].  The default prefix is /usr; if you don't like that, use the {{{--prefix}}} option to configure.
 
 Running {{{make check}}} is strongly suggested.
